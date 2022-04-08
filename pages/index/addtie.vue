@@ -8,8 +8,8 @@
 			</u-dropdown> -->
 		</view>
 		<view class="addcontent">
-			<textarea type="text" v-model="fromlist.content" maxlength="100" placeholder-class="line"
-				placeholder="请输入你想发表的内容吧(最大字数100)" />
+			<textarea type="text" v-model="fromlist.content" maxlength="150" placeholder-class="line"
+				placeholder="请输入你想发表的内容吧" />
 
 		</view>
 		<!-- 上传 -->

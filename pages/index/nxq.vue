@@ -47,20 +47,18 @@
 									<view class="">
 										{{item.uname}}
 									</view>
-									<view>
-
-									</view>
+									
+								</view>
+								<view class="con3">
+									{{item.ctime}}|{{item.storey}}
 								</view>
 								<view class="con2">
 									{{item.content}}
 								</view>
-								<view class="con3">
-									<view>{{item.ctime}}</view>
-
-								</view>
+								
 							</view>
 						</view>
-						<view style="width: 100%;background-color: #f9f9f9;height: 5rpx;margin-top: 20rpx;"></view>
+						<view style="width: 100%;background-color: #f9f9f9;height: 25rpx;margin-top: 20rpx;"></view>
 
 					</view>
 
@@ -71,9 +69,6 @@
 			</view>
 		</view>
 		<view class="footer">
-			<!-- <input @confirm="add" type="text" placeholder="发表你的评论吧" v-model="content" confirm-type="发表"
-						v-if="userinfo" />
-					<text v-else>请先登录在发表评论吧</text> -->
 
 			<u-search margin="10rpx 50rpx" @search="add" @custom="add" :showAction="true" searchIcon="grid" actionText="发表"
 				placeholder="发表你的评论" v-model="content" :clearabled="true">
@@ -132,12 +127,15 @@
 			//评论列表
 			pllist() {
 				this.$u.post('/Forum/pllist', {
-						id: this.id
+						fid: this.id,
+						page:1,
+						limit:50,
+						loginId:uni.getStorageSync('userInfo').id
 					})
 					.then(res => {
 						// console.log(res)
 						if (res.code == 200) {
-							this.pldata = res.data
+							this.pldata = res.data.content
 							console.log('评论', this.pldata)
 
 						}
@@ -227,6 +225,7 @@
 
 			.content {
 				width: 100%;
+				font-size: 13px;
 				margin-top: 110rpx;
 				text-overflow: -o-ellipsis-lastline;
 				// overflow: hidden;
@@ -261,7 +260,7 @@
 					.conview {
 						.con1 {
 							color: #000;
-							font-size: 15px;
+							font-size: 13px;
 							font-weight: bold;
 							display: flex;
 							justify-content: space-between;
