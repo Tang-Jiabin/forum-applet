@@ -33,6 +33,7 @@
 				showd: false,
 				// show:false,
 				fileList: [],
+				// action: 'https://api.tangjiabin.xyz/File/upload',
 				action: 'http://127.0.0.1:8080/File/upload',
 
 				values: '',

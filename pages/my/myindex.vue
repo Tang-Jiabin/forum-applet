@@ -10,8 +10,8 @@
 					<view class="topleftname">
 						<button class="topright"  open-type="getUserProfile" lang="zh_CN" @tap="wxGetUserInfo" v-if="!userInfod">立即登录</button>
 						<p v-if="userInfod">{{userInfod.name}}</p>
-						<!-- <p v-if="userInfod &&userInfod.telephone==null">未绑定</p> -->
-						<p v-if="userInfod.telephone">TEL: {{userInfod.telephone}}</p>
+						
+						<p>{{userInfod.sign}}</p>
 					</view>
 				</view>
 				<view class="topright2" v-if="userInfod" @click = "updatelist">
@@ -76,13 +76,13 @@
 					</view>
 				</view>
 				
-				<!-- <view class="my_list" @click="gyclick">
+				<view class="my_list" @click="myjlclick">
 					<u-icon name="info-circle" color="#333" size="40"></u-icon>
-					<span>设置</span>
+					<span>阅读历史</span>
 					<view class="mylisticon">
 						<u-icon name="arrow-right" color="#333" size="30"></u-icon>
 					</view>
-				</view>		 -->
+				</view>		
 			</view>
 		</view>
 		<!-- 弹出 -->
@@ -172,6 +172,20 @@
 				if(this.userInfod){
 					uni.navigateTo({
 						url:'./mysoucang'
+					})
+				}else{
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});	
+				}
+				
+			},
+			//阅读历史
+			myjlclick(){
+				if(this.userInfod){
+					uni.navigateTo({
+						url:'./myjl'
 					})
 				}else{
 					uni.showToast({

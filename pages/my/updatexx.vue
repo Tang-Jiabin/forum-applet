@@ -18,7 +18,8 @@
 							{{item.text}}
 						</u-radio>
 					</u-radio-group>
-				</u-form-item>				
+				</u-form-item>		
+				<u-form-item label="签名"><u-input v-model="form.sign" /></u-form-item>		
 			</u-form>
 		</view>
 		<view class="but" @click="undate">
@@ -36,7 +37,8 @@
 				fileList: [{
 					url:uni.getStorageSync('userInfo').logo
 				}],
-				action:'http://192.168.3.134:8080/File/upload',
+				// action:'https://api.tangjiabin.xyz/File/upload',
+				action:'http://127.0.0.1:8080/File/upload',
 				userinfo:'',
 				lists:[],
 				sexList:[
@@ -54,7 +56,8 @@
 					id:uni.getStorageSync('userInfo').id,
 					logo:uni.getStorageSync('userInfo').logo,
 					name:uni.getStorageSync('userInfo').name,
-					sex:uni.getStorageSync('userInfo').sex
+					sex:uni.getStorageSync('userInfo').sex,
+					sign:uni.getStorageSync('userInfo').sign
 					
 				}
 				
@@ -100,7 +103,8 @@
 				    id:this.form.id,
 					logo:this.form.logo,
 					name:this.form.name,
-					sex:this.form.sex
+					sex:this.form.sex,
+					sign:this.form.sign
 				   })
 				   .then( res =>{
 				   	// console.log(res)

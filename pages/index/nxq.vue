@@ -102,7 +102,8 @@
 
 			xqlist() {
 				this.$u.post('/Forum/bydata', {
-						id: this.id
+						id: this.id,
+						uid: uni.getStorageSync('userInfo').id
 					})
 					.then(res => {
 						// console.log(res)

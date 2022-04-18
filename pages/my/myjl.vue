@@ -91,7 +91,7 @@
 		methods:{
 			//我的收藏列表
 			mysclist(){		
-				this.$u.post('/Forum/sclist', {
+				this.$u.post('/Forum/jllist', {
 					loginId:uni.getStorageSync('userInfo').id,
 					page:this.page,
 					limit:this.limit,

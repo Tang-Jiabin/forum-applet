@@ -61,12 +61,13 @@
 				this.$u.post('/Forum/list', {
 					uid:uni.getStorageSync('userInfo').id,
 					page:this.page,
-					limit:this.limit
+					limit:this.limit,
+					lx:2
 				})
 				.then( res =>{
 					if(res.code ==200){
-						this.datas = res.data
-						this.listdata = this.listdata.concat(res.data)
+						this.datas = res.data.content
+						this.listdata = this.listdata.concat(res.data.content)
 					}
 					// console.log(res)
 				})

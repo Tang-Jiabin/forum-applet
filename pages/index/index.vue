@@ -3,7 +3,7 @@
 		<u-search margin="10rpx 30rpx" @search="search" :showAction="false" placeholder="请输入搜索内容" v-model="keyword"
 			:clearabled="true">
 		</u-search>
-		<u-tabs :list="list" :is-scroll="false" :current="current" @change="change"></u-tabs>
+		<u-tabs :list="list"  :current="current" @change="change"></u-tabs>
 		<circlenew :listdata="listdata" :userinfo="userinfo"></circlenew>
 	</view>
 </template>
@@ -40,6 +40,7 @@
 		},
 
 		onShow() {
+			this.labellist()
 			this.userinfo = uni.getStorageSync('userInfo')
 		},
 
@@ -47,6 +48,7 @@
 			console.log("onLoad")
 			this.page = 1
 			this.listdata = []
+			
 			this.tielist()
 		},
 
@@ -61,7 +63,7 @@
 						page: this.page,
 						limit: this.limit,
 						labelsid: 0,
-						uid: uni.getStorageSync("userInfo").id
+						loginId: uni.getStorageSync("userInfo").id
 					})
 					.then(res => {
 						console.log(res)
@@ -76,7 +78,7 @@
 			},
 
 			change(index) {
-				this.lx = index + 1
+				this.lx = this.list[index].id
 				this.listdata = []
 				this.page = 1
 				this.tielist()
@@ -90,6 +92,16 @@
 				this.tielist()
 				this.current = 0;
 				this.keyword = ''
+			},
+			labellist() {
+				this.$u.post('/Labels/list', {})
+					.then(res => {
+						if (res.code == 200) {
+							this.list = res.data
+							// console.log(res.data)
+						}
+					})
+
 			}
 
 		},

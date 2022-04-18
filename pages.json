@@ -69,6 +69,13 @@
 			"style": {
 				"navigationBarTitleText": "我的收藏"				
 			}
+		},
+		//阅读记录myjl
+		{
+			"path": "pages/my/myjl",
+			"style": {
+				"navigationBarTitleText": "阅读历史"				
+			}
 		}
 	],
 	"globalStyle": {
