@@ -6,7 +6,7 @@
 		</view>
 		<view class="newview1" v-else v-for="(item,index) in listdata" :key="index">
 			<view style="padding: 0 30rpx;">
-				<view class="" @click="newxqclick(item.id)">
+				<view class="" @click="newxqclick(item.fid)">
 					<view class="top">
 						<view class="topleftimg">
 							<u-avatar :src="item.logo" size="80"></u-avatar>
@@ -19,44 +19,31 @@
 					<view class="content">
 						<p>{{item.content}}</p>
 					</view>
-					<view class="conimg" v-if="item.picture">
-						<u-row gutter="16">
-							<u-col span="4" v-for="(_item,_index) in item.picture.split(',') " :key="_index">
-								<view class="demo-layout bg-purple" style="text-align: center;margin-bottom: 8rpx;">
-									<u-avatar :src="_item" mode="square" size="215"></u-avatar>
-								</view>
-							</u-col>
-						</u-row>
-					</view>
+					
 				</view>
 				<view class="plview">
 					<u-row gutter="16">
 						<u-col span="4">
 							<view class="demo-layout bg-purple" style="text-align: center;" v-if="item.dz!=1"
-								@click="dzlist(item,index)">
-								<u-icon name="thumb-up" color="#000" size="30"></u-icon>
-								<text style="margin-left: 10rpx;font-size: 13px;">点赞({{item.dzmun}})</text>
-
+								>
+								
+<text style="margin-left: 10rpx;font-size: 13px;" > </text>
 							</view>
 							<view class="demo-layout bg-purple" style="text-align: center;" v-if="item.dz==1"
-								@click="cleandzlist(item,index)">
-								<u-icon name="thumb-up-fill" color="#2B85E4" size="30"></u-icon>
-								<text
-									style="margin-left: 10rpx;font-size: 13px; color: #2B85E4;">已点赞({{item.dzmun}})</text>
+								>
+								<text style="margin-left: 10rpx;font-size: 13px;" > </text>
 							</view>
 						</u-col>
 
 
 						<u-col span="4">
 							<view class="demo-layout bg-purple-dark" style="text-align: center;" v-if="item.sc!=1"
-								@click="scclick(item,index)">
-								<u-icon name="star" color="#000" size="30"></u-icon>
-								<text style="margin-left: 10rpx;font-size: 13px;">收藏</text>
+								>
+								<text style="margin-left: 10rpx;font-size: 13px;" > </text>
 							</view>
 							<view class="demo-layout bg-purple-dark" style="text-align: center;" v-if="item.sc==1"
-								@click="cleaclick(item,index)">
-								<u-icon name="star-fill" color="#2B85E4" size="30"></u-icon>
-								<text style="margin-left: 10rpx;font-size: 13px;color:#2B85E4;">已收藏</text>
+								>
+								<text style="margin-left: 10rpx;font-size: 13px;" > </text>
 							</view>
 						</u-col>
 						<u-col span="4">
@@ -126,17 +113,17 @@
 		},
 		created() {
 			this.listdata = []
-			this.mysclist()
+			this.mypllist()
 
 		},
 		methods: {
 			//我的收藏列表
-			mysclist() {
-				this.$u.post('/Forum/jllist', {
-						loginId: uni.getStorageSync('userInfo').id,
+			mypllist() {
+				this.$u.post('/Forum/pllist', {
+						uid: uni.getStorageSync('userInfo').id,
 						page: this.page,
-						limit: this.limit,
-						lx: 2
+						limit: this.limit
+						
 					})
 					.then(res => {
 						if (res.code == 200) {
@@ -274,7 +261,7 @@
 			},
 			del(item) {
 				if (this.userinfo) {
-					this.$u.post('/Forum/jl/del', {
+					this.$u.post('/Forum/pl/del', {
 							id: item.id,
 							uid: uni.getStorageSync('userInfo').id
 						})
@@ -282,7 +269,7 @@
 							// console.log(res)
 							if (res.code == 200) {
 								this.listdata = []
-								this.mysclist()
+								this.mypllist()
 							}
 						})
 				} else {

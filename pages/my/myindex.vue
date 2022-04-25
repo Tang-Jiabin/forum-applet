@@ -4,17 +4,18 @@
 			<view class="top">
 				<view class="topleft">
 					<view class="topleftimg">
-						<u-avatar src="../static/uview/example/my1.png" v-if="!userInfod" ></u-avatar>
+						<u-avatar src="../static/uview/example/my1.png" v-if="!userInfod"></u-avatar>
 						<u-avatar :src="userInfod.logo" size="120" v-if="userInfod"></u-avatar>
 					</view>
 					<view class="topleftname">
-						<button class="topright"  open-type="getUserProfile" lang="zh_CN" @tap="wxGetUserInfo" v-if="!userInfod">立即登录</button>
+						<button class="topright" open-type="getUserProfile" lang="zh_CN" @tap="wxGetUserInfo"
+							v-if="!userInfod">立即登录</button>
 						<p v-if="userInfod">{{userInfod.name}}</p>
-						
+
 						<p>{{userInfod.sign}}</p>
 					</view>
 				</view>
-				<view class="topright2" v-if="userInfod" @click = "updatelist">
+				<view class="topright2" v-if="userInfod" @click="updatelist">
 					编辑资料
 				</view>
 			</view>
@@ -27,7 +28,7 @@
 				</view>
 				<view class="">
 					<text>0</text>
-				</view>			
+				</view>
 			</view>
 			<view class="bottomview1" v-else>
 				<view class="">
@@ -41,7 +42,7 @@
 				<view class="">
 					<text v-if='tiexglist.dz'>{{tiexglist.dz}}</text>
 					<text v-else>0</text>
-				</view>			
+				</view>
 			</view>
 			<view class="bottomview">
 				<view class="">
@@ -53,15 +54,15 @@
 				<view class="">
 					<text>获赞</text>
 				</view>
-				
+
 			</view>
-			
-			
+
+
 		</view>
 		<!-- 内容 -->
 		<view class="my_content">
 			<view class="" slot="body">
-				<view class="my_list"  @click="mytieclick">
+				<view class="my_list" @click="mytieclick">
 					<u-icon name="account" color="#333" size="40"></u-icon>
 					<span>我的帖子</span>
 					<view class="mylisticon">
@@ -75,33 +76,47 @@
 						<u-icon name="arrow-right" color="#333" size="30"></u-icon>
 					</view>
 				</view>
-				
+
 				<view class="my_list" @click="myjlclick">
 					<u-icon name="info-circle" color="#333" size="40"></u-icon>
 					<span>阅读历史</span>
 					<view class="mylisticon">
 						<u-icon name="arrow-right" color="#333" size="30"></u-icon>
 					</view>
-				</view>		
+				</view>
+				<view class="my_list" @click="myplclick">
+					<u-icon name="info-circle" color="#333" size="40"></u-icon>
+					<span>我的评论</span>
+					<view class="mylisticon">
+						<u-icon name="arrow-right" color="#333" size="30"></u-icon>
+					</view>
+				</view>
+				<view class="my_list" v-if="userInfod" @click="loginout">
+					<u-icon name="info-circle" color="#333" size="40"></u-icon>
+					<span>退出登录</span>
+					<view class="mylisticon">
+						<u-icon name="arrow-right" color="#333" size="30"></u-icon>
+					</view>
+				</view>
 			</view>
 		</view>
 		<!-- 弹出 -->
 		<u-popup v-model="show" mode="center">
-				<view class = "popupview">
-					
-				</view>
-			</u-popup>	
+			<view class="popupview">
+
+			</view>
+		</u-popup>
 	</view>
 </template>
 
 <script>
 	import WXBizDataCrypt from '../../common/WXBizDataCrypt.js'
 	import app from '../../App.vue'
-	export default{
-		data(){
-			return{
-				show:false,
-				xcxcode: '',//获取登录用户的code
+	export default {
+		data() {
+			return {
+				show: false,
+				xcxcode: '', //获取登录用户的code
 				userInfo: {
 					avatarUrl: '',
 					city: '',
@@ -110,18 +125,18 @@
 					province: '',
 					nickName: ''
 				},
-				userInfod:uni.getStorageSync("userInfo"),
-				code:"",
+				userInfod: uni.getStorageSync("userInfo"),
+				code: "",
 				SessionKey: '',
-				encryptedData:"",
-				iv:"",
+				encryptedData: "",
+				iv: "",
 				OpenId: '',
 				nickName: null,
 				avatarUrl: null,
-				telephone:'',
-				tiexglist:{}
-				
-				
+				telephone: '',
+				tiexglist: {}
+
+
 			}
 		},
 		onLoad() {
@@ -132,68 +147,96 @@
 		onShow() {
 			this.tiexgdata()
 		},
-		methods:{
+		methods: {
 			//我的帖子相关信息
-			tiexgdata(){
+			tiexgdata() {
 				this.$u.post('/Forum/userdata', {
-				 uid:this.userInfod.id
-				})
-				.then( res =>{
-					if(res.code ==200){
-						this.tiexglist = res.data
-					}
-					
-				})
-				
+						uid: this.userInfod.id
+					})
+					.then(res => {
+						if (res.code == 200) {
+							this.tiexglist = res.data
+						}
+
+					})
+
 			},
 			//修改信息
-			updatelist(){
+			updatelist() {
 				uni.redirectTo({
-					url:'./updatexx'
+					url: './updatexx'
 				})
-				
+
 			},
 			//我的帖子
-			mytieclick(){
-				if(this.userInfod){
+			mytieclick() {
+				if (this.userInfod) {
 					uni.navigateTo({
-						url:'./mytie'
+						url: './mytie'
 					})
-				}else{
+				} else {
 					uni.showToast({
 						title: '请先登录',
 						icon: 'none'
-					});	
+					});
 				}
-				
+
 			},
 			//我的收藏
-			myscclick(){
-				if(this.userInfod){
+			myscclick() {
+				if (this.userInfod) {
 					uni.navigateTo({
-						url:'./mysoucang'
+						url: './mysoucang'
 					})
-				}else{
+				} else {
 					uni.showToast({
 						title: '请先登录',
 						icon: 'none'
-					});	
+					});
 				}
-				
+
 			},
 			//阅读历史
-			myjlclick(){
-				if(this.userInfod){
+			myjlclick() {
+				if (this.userInfod) {
 					uni.navigateTo({
-						url:'./myjl'
+						url: './myjl'
 					})
-				}else{
+				} else {
 					uni.showToast({
 						title: '请先登录',
 						icon: 'none'
-					});	
+					});
 				}
-				
+
+			},
+			//我的评论
+			myplclick() {
+				if (this.userInfod) {
+					uni.navigateTo({
+						url: './mypl'
+					})
+				} else {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});
+				}
+			
+			},
+			//退出
+			loginout() {
+				let _self = this;
+				app.userInfo = null
+				_self.userInfo = null
+				uni.removeStorageSync("userInfo")
+				app.user = null
+				this.tiexgdata()
+				//跳转本页面
+				uni.reLaunch({
+					url: '../my/myindex'
+				});
+			
 			},
 			//获取用户信息
 			wxGetUserInfo() {
@@ -213,27 +256,27 @@
 						});
 						// 2.提交数据到后台
 						this.$u.post('User/getOpenid', {
-							"code": _self.xcxcode,
-							"name": _self.userInfo.nickName,
-							"logo": _self.userInfo.avatarUrl,
-							"sex":_self.userInfo.gender
-						})
-						.then(res => {
-							//将数据存储到全局
-							app.user = res.data.name
-							uni.setStorageSync("userInfo", res.data)
-							//关闭提示信息
-							setTimeout(function() {
-								uni.hideLoading();
-							}, 1000);
-							//刷新页面
-							_self.userInfod = uni.getStorageSync("userInfo") //获取登录数据
-							this.tiexgdata()
-							//跳转本页面
-							uni.switchTab({
-							    url: '../my/myindex'
-							});
-						})
+								"code": _self.xcxcode,
+								"name": _self.userInfo.nickName,
+								"logo": _self.userInfo.avatarUrl,
+								"sex": _self.userInfo.gender
+							})
+							.then(res => {
+								//将数据存储到全局
+								app.user = res.data.name
+								uni.setStorageSync("userInfo", res.data)
+								//关闭提示信息
+								setTimeout(function() {
+									uni.hideLoading();
+								}, 1000);
+								//刷新页面
+								_self.userInfod = uni.getStorageSync("userInfo") //获取登录数据
+								this.tiexgdata()
+								//跳转本页面
+								uni.switchTab({
+									url: '../my/myindex'
+								});
+							})
 					},
 					fail(res) {
 						uni.showToast({
@@ -242,7 +285,7 @@
 						});
 					}
 				});
-				
+
 				return false
 			},
 			//登录
@@ -261,138 +304,131 @@
 				});
 				return false;
 			},
-			// //联系客服
-			// lianxiclick(){
-			// 	uni.showToast({
-			// 		title: '请先登录',
-			// 		icon: 'none'
-			// 	});	
-			// },
-			
-			// //绑定手机号
-			// numbers(){		
-			// 	if(this.userInfod.telephone){
-			// 		uni.showToast({
-			// 			title: '已绑定',
-			// 			icon: 'none'
-			// 		});		
-			// 	}else{
-			// 		uni.showToast({
-			// 			title: '请先登录',
-			// 			icon: 'none'
-			// 		});				
-			// 	}
-			// },
-			getPhoneNumber(e){ //向后台更新信息	
+		
+			getPhoneNumber(e) { //向后台更新信息	
 				let _this = this;
-				let key= uni.getStorageSync("userInfo").aname;
+				let key = uni.getStorageSync("userInfo").aname;
 				// console.log("key",key)
-				let pc=new WXBizDataCrypt("wx5eb9d9c25e369442",key);
+				let pc = new WXBizDataCrypt("wx5eb9d9c25e369442", key);
 				// console.log("pc",pc)
-				let data=pc.decryptData(e.detail.encryptedData,e.detail.iv);
+				let data = pc.decryptData(e.detail.encryptedData, e.detail.iv);
 				// console.log("data",data)
 				uni.showLoading({
-					title:'绑定中',
-					mask:true
+					title: '绑定中',
+					mask: true
 				})
 				_this.$u.post('User/update', {
-					'telephone':data.phoneNumber,
-					'id':uni.getStorageSync("userInfo").id
-				})
-				.then(res => {
-					//关闭提示信息
-					setTimeout(function() {
-						uni.hideLoading();
-					}, 1000);
-					if(res.code == 200){
-						uni.showToast({
-							title: '绑定成功',
-							icon: 'none'
-						});
-						// console.log(res)
-						  uni.setStorageSync("userInfo",res.data)
-						  _this.userInfod = uni.getStorageSync("userInfo")
-					}
-					
-				})
-			
-			
-							
-				
+						'telephone': data.phoneNumber,
+						'id': uni.getStorageSync("userInfo").id
+					})
+					.then(res => {
+						//关闭提示信息
+						setTimeout(function() {
+							uni.hideLoading();
+						}, 1000);
+						if (res.code == 200) {
+							uni.showToast({
+								title: '绑定成功',
+								icon: 'none'
+							});
+							// console.log(res)
+							uni.setStorageSync("userInfo", res.data)
+							_this.userInfod = uni.getStorageSync("userInfo")
+						}
+
+					})
+
+
+
+
 			}
-			
+
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	.myboss{
+	.myboss {
 		width: 100%;
-		.mytop{
+
+		.mytop {
 			width: 100%;
 			height: 400rpx;
-			 background-image: linear-gradient(#8FBFFC, #5B9CF9,);
-			
-			 padding: 30rpx;
-			 .top{
-				 display: flex;
-				 justify-content: space-between;
-			 }
-			 .bottomview1{
-				 width: 100%;
-				 height: 60rpx;
-				 margin-top: 100rpx;
-				 // background-color: #18B566;
-				 display: flex;
-				 justify-content: center;
-				 align-items: center;
-				 view{
-					 text-align: center;
-					 width: 30%;
-					 color: #fff;
-				 }
-				 view:last-child{
-				 	border-right: none;
-				 }
-			 }
-			 .bottomview{
-				 width: 100%;
-				 height: 60rpx;
-				 // background-color: #18B566;
-				 display: flex;
-				 justify-content: center;
-				 align-items: center;
-				 view{
-					 text-align: center;
-					 width: 30%;
-					 border-right: 1px solid #fff;
-					 color: #fff;
-				 }
-				 view:last-child{
-					 border-right: none;
-				 }
-			 }
-			 
+			background-image: linear-gradient(#8FBFFC, #5B9CF9, );
+
+			padding: 30rpx;
+
+			.top {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.bottomview1 {
+				width: 100%;
+				height: 60rpx;
+				margin-top: 100rpx;
+				// background-color: #18B566;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				view {
+					text-align: center;
+					width: 30%;
+					color: #fff;
+				}
+
+				view:last-child {
+					border-right: none;
+				}
+			}
+
+			.bottomview {
+				width: 100%;
+				height: 60rpx;
+				// background-color: #18B566;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				view {
+					text-align: center;
+					width: 30%;
+					border-right: 1px solid #fff;
+					color: #fff;
+				}
+
+				view:last-child {
+					border-right: none;
+				}
+			}
+
 		}
-		.topleft{
+
+		.topleft {
 			height: 100rpx;
 			color: #fff;
-			.topleftimg{
+
+			.topleftimg {
 				float: left;
 				margin-right: 30rpx;
 			}
-			.topleftname{
+
+			.topleftname {
 				float: left;
 				line-height: 50rpx;
-				p{
+
+				p {
 					line-height: 60rpx;
 					font-size: 16px;
-					
+
 				}
-				p:last-child{
+
+				p:last-child {
 					font-size: 11px;
 				}
 			}
+
 			// display: flex;
 			// justify-content:flex-start ;
 			// align-items: center;
@@ -401,23 +437,25 @@
 			// 	flex-direction:row-reverse;
 			// }
 		}
-		.topright{
+
+		.topright {
 			// width: 170rpx;
 			height: 67rpx;
-			color:#fff !important;
+			color: #fff !important;
 			font-size: 12px;
 			border: 1px solid #fff;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			border-radius: 50px;
-			background-color:rgba($color: #000000, $alpha: 0) !important; 
+			background-color: rgba($color: #000000, $alpha: 0) !important;
 			margin-top: 10rpx;
 		}
-		.topright2{
+
+		.topright2 {
 			width: 170rpx;
 			height: 67rpx;
-			color:#fff !important;
+			color: #fff !important;
 			font-size: 12px;
 			border: 1px solid #fff;
 			display: flex;
@@ -426,17 +464,18 @@
 			border-radius: 50px;
 			margin-top: 20rpx;
 		}
+
 		.u-card-wrap {
 			background-color: $u-bg-color;
 			padding: 1px;
 		}
-		
+
 		.u-body-item {
 			font-size: 32rpx;
 			color: #333;
 			padding: 20rpx 10rpx;
 		}
-		
+
 		.u-body-item image {
 			width: 120rpx;
 			flex: 0 0 120rpx;
@@ -444,13 +483,14 @@
 			border-radius: 8rpx;
 			margin-left: 12rpx;
 		}
+
 		.my_top {
 			width: 100%;
 			background-color: #333333;
 			height: 250rpx;
 			position: relative;
 		}
-		
+
 		.my_top1>image {
 			width: 100rpx;
 			height: 100rpx;
@@ -459,24 +499,24 @@
 			margin-left: 40rpx;
 			float: left;
 		}
-		
+
 		.my_top_p {
 			float: left;
 			margin-top: 50rpx;
 			margin-left: 40rpx;
 		}
-		
+
 		.my_top_p .p1 {
 			font-size: 35rpx;
 			color: #fff;
 		}
-		
+
 		.my_top_p .p2 {
 			margin-top: 15rpx;
 			font-size: 25rpx;
 			color: #fff;
 		}
-		
+
 		.my_top_p2 {
 			background-color: #FFFFFF;
 			position: absolute;
@@ -489,66 +529,75 @@
 			padding-top: 30rpx;
 			box-shadow: 0px 0px 5px #e6e6e6 !important;
 		}
-		
+
 		.my_top_p2 p {
 			margin-top: 10rpx;
 		}
-		
+
 		.demo-layout {
 			text-align: center;
 		}
-		.my_content{
+
+		.my_content {
 			padding: 40rpx 30rpx;
 			// width: 84%;
 			// margin-left: 8%;
 			// margin-bottom: 100rpx;
 			// margin-top: 30rpx;
-			
+
 		}
-		
-		
-		.my_list{
+
+
+		.my_list {
 			width: 100%;
 			height: 100rpx;
 			line-height: 100rpx;
 			color: #333;
 			border-bottom: 1px solid #f5f0f0bf;
 		}
-		.my_list span{
+
+		.my_list span {
 			margin-left: 20rpx;
 			font-size: 30rpx;
 		}
-		.mylisticon{
+
+		.mylisticon {
 			float: right;
 		}
-		.my_list button{
+
+		.my_list button {
 			float: left !important;
 			background-color: #fff !important;
 			font-size: 30rpx !important;
-			color: #333 !important;	    
+			color: #333 !important;
 			padding-left: 20rpx !important;
 			width: 70% !important;
 			height: 90rpx;
 			line-height: 90rpx;
 			text-align: left !important;
-			
+
 		}
-		.my_list button::after{
+
+		.my_list button::after {
 			border: none !important;
 		}
-		.kf_icon{
+
+		.kf_icon {
 			float: left;
-			margin-top:31rpx;
+			margin-top: 31rpx;
 		}
-		.mylist2{
+
+		.mylist2 {
 			margin-bottom: 40rpx;
 		}
-		
-		
+
+
 	}
-	.popupview{
+
+	.popupview {
 		padding: 10px;
 	}
+
 	.getCaptcha {
 		background-color: #18B566;
 		color: #fff;
@@ -556,8 +605,8 @@
 		font-size: 30rpx;
 		padding: 0rpx 14rpx;
 		margin-top: 10rpx;
-		
-	
+
+
 		&::after {
 			border: none;
 		}

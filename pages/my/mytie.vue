@@ -2,38 +2,80 @@
 	<view class="newboss">
 		<view class="" style="text-align: center;" v-if="listdata.length<=0">
 			<!-- <image src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01248c55425fbd0000019ae9af0b57.jpg%401280w_1l_2o_100sh.jpg&refer=http%3A%2F%2Fimg.zcool.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1636206710&t=b4033bcb536a694170c08f062dfe6320" mode="aspectFill" width="100%" height="100%"></image> -->
-			<view style="color: #999;font-size: 16px;margin-top: 100px;">暂无数据</view>	
+			<view style="color: #999;font-size: 16px;margin-top: 100px;">暂无数据</view>
 		</view>
 		<view class="newview1" v-else v-for="(item,index) in listdata" :key="index">
 			<view style="padding: 0 30rpx;">
 				<view class="" @click="newxqclick(item.id)">
 					<view class="top">
 						<view class="topleftimg">
-							<u-avatar :src="item.logo" size="80"></u-avatar>	
+							<u-avatar :src="item.logo" size="80"></u-avatar>
 						</view>
 						<view class="topleftname">
-							<p><text>{{item.umame}}</text><text style="font-size: 25rpx; margin-left: 20rpx;color: #2979FF;">{{item.aid==1?'审核中，请耐心等待':''}}</text></p>
+							<p><text>{{item.umame}}</text><text
+									style="font-size: 25rpx; margin-left: 20rpx;color: #2979FF;">{{item.aid==1?'审核中，请耐心等待':''}}</text>
+							</p>
 							<p>{{item.ctime}}</p>
-						</view>			
+						</view>
 					</view>
 					<view class="content">
 						<p>{{item.content}}</p>
 					</view>
-					<view class="conimg">
-						<u-row gutter="16" >
+					<view class="conimg" v-if="item.picture">
+						<u-row gutter="16">
 							<u-col span="4" v-for="(_item,_index) in item.picture.split(',') " :key="_index">
-								<view class="demo-layout bg-purple" style="text-align: center;margin-bottom: 8rpx;"><u-avatar :src="_item" mode="square" size="215"></u-avatar></view>
+								<view class="demo-layout bg-purple" style="text-align: center;margin-bottom: 8rpx;">
+									<u-avatar :src="_item" mode="square" size="215"></u-avatar>
+								</view>
 							</u-col>
 						</u-row>
-					</view>	
-				</view>				
+					</view>
+				</view>
+				<view class="plview">
+					<u-row gutter="16">
+						<u-col span="4">
+							<view class="demo-layout bg-purple" style="text-align: center;" v-if="item.dz!=1"
+								@click="dzlist(item,index)">
+								<u-icon name="thumb-up" color="#000" size="30"></u-icon>
+								<text style="margin-left: 10rpx;font-size: 13px;">点赞({{item.dzmun}})</text>
+
+							</view>
+							<view class="demo-layout bg-purple" style="text-align: center;" v-if="item.dz==1"
+								@click="cleandzlist(item,index)">
+								<u-icon name="thumb-up-fill" color="#2B85E4" size="30"></u-icon>
+								<text
+									style="margin-left: 10rpx;font-size: 13px; color: #2B85E4;">已点赞({{item.dzmun}})</text>
+							</view>
+						</u-col>
+
+
+						<u-col span="4">
+							<view class="demo-layout bg-purple-dark" style="text-align: center;" v-if="item.sc!=1"
+								@click="scclick(item,index)">
+								<u-icon name="star" color="#000" size="30"></u-icon>
+								<text style="margin-left: 10rpx;font-size: 13px;">收藏</text>
+							</view>
+							<view class="demo-layout bg-purple-dark" style="text-align: center;" v-if="item.sc==1"
+								@click="cleaclick(item,index)">
+								<u-icon name="star-fill" color="#2B85E4" size="30"></u-icon>
+								<text style="margin-left: 10rpx;font-size: 13px;color:#2B85E4;">已收藏</text>
+							</view>
+						</u-col>
+						<u-col span="4">
+							<view class="demo-layout bg-purple-light" style="text-align: center;" @click="del(item)">
+								<u-icon name="del" color="#000" size="30"></u-icon>
+								<text style="margin-left: 10rpx;font-size: 13px;">删除</text>
+							</view>
+						</u-col>
+					</u-row>
+				</view>
 			</view>
-			
+
 			<view style="width: 100%;background-color: #f9f9f9;height: 10rpx;">
-				
+
 			</view>
 		</view>
-		
+
 	</view>
 </template>
 
@@ -41,60 +83,196 @@
 	export default {
 		data() {
 			return {
-				avatar:'',
-				listdata:[],
-				page:1,
-				limit:10,
-				datas:[],
-				picture:[],
-				
+				avatar: '',
+				listdata: [],
+				page: 1,
+				limit: 10,
+				datas: [],
+				picture: [],
+				userinfo: uni.getStorageSync('userInfo')
+
 			}
 		},
 		created() {
 			this.listdata = []
 			this.mytielist()
-		
+
 		},
-		methods:{
+		methods: {
 			//我的帖子列表
-			mytielist(){		
+			mytielist() {
 				this.$u.post('/Forum/list', {
-					uid:uni.getStorageSync('userInfo').id,
-					page:this.page,
-					limit:this.limit,
-					lx:2
-				})
-				.then( res =>{
-					if(res.code ==200){
-						this.datas = res.data.content
-						this.listdata = this.listdata.concat(res.data.content)
-					}
-					// console.log(res)
-				})
-				
+						uid: uni.getStorageSync('userInfo').id,
+						page: this.page,
+						limit: this.limit,
+						lx: 2
+					})
+					.then(res => {
+						if (res.code == 200) {
+							this.datas = res.data.content
+							this.listdata = this.listdata.concat(res.data.content)
+						}
+						// console.log(res)
+					})
+
+			},
+			//点赞
+			dzlist(item, index) {
+				if (this.userinfo) {
+					let telephone = uni.getStorageSync('userInfo').telephone;
+					// console.log(telephone)
+
+					this.$u.post('/Forum/dz', {
+							id: item.id,
+							uid: uni.getStorageSync('userInfo').id
+						})
+						.then(res => {
+							// console.log(res)
+							if (res.code == 200) {
+								let listdata = this.listdata;
+								listdata[index].dz = 1;
+								listdata[index].dzmun = listdata[index].dzmun + 1;
+								this.listdata = listdata;
+								// console.log(item,index)
+								// console.log(this.listdata)		
+							}
+						})
+
+
+					// this.$u.post('/Forum/dz', {
+					// 	id:item.id,
+					// 	uid:uni.getStorageSync('userInfo').id
+					// })
+					// .then( res =>{
+					// 	// console.log(res)
+					// 	if(res.code ==200){
+					// 		let listdata=this.listdata;
+					// 		listdata[index].dz=1;
+					// 		listdata[index].dzmun=listdata[index].dzmun+1;						
+					// 		this.listdata=listdata;
+					// 		// console.log(item,index)
+					// 		// console.log(this.listdata)		
+					// 	}
+					// })	
+
+				} else {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});
+				}
+			},
+
+			cleandzlist(item, index) {
+				if (this.userinfo) {
+					this.$u.post('/Forum/dzdel', {
+							id: item.id,
+							uid: uni.getStorageSync('userInfo').id
+						})
+						.then(res => {
+							// console.log(res)
+							if (res.code == 200) {
+								let dzlist = this.listdata
+								dzlist[index].dz = 0
+								dzlist[index].dzmun = this.listdata[index].dzmun - 1;
+								this.listdata = dzlist
+							}
+						})
+				} else {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});
+				}
+			},
+			//收藏
+			scclick(item, index) {
+				if (this.userinfo) {
+
+					this.$u.post('/Forum/sc', {
+							id: item.id,
+							uid: uni.getStorageSync('userInfo').id
+						})
+						.then(res => {
+							// console.log(res)
+							if (res.code == 200) {
+								let sclist = this.listdata
+								sclist[index].sc = 1
+								this.listdata = sclist
+							}
+						})
+
+				} else {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});
+				}
+			},
+			//取消收藏
+			cleaclick(item, index) {
+				if (this.userinfo) {
+					this.$u.post('/Forum/scdel', {
+							id: item.id,
+							uid: uni.getStorageSync('userInfo').id
+						})
+						.then(res => {
+							// console.log(res)
+							if (res.code == 200) {
+								let sclist = this.listdata
+								sclist[index].sc = 0
+								this.listdata = sclist
+							}
+						})
+				} else {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});
+				}
+
 			},
 			//详情
-			newxqclick(id){
+			newxqclick(id) {
 				// console.log(id)
 				uni.navigateTo({
-					url:'../circle/circlenxq?id='+id
+					url: '../index/nxq?id=' + id
 				})
-				
+			},
+			del(item) {
+				if (this.userinfo) {
+					this.$u.post('/Forum/del', {
+							id: item.id,
+							uid: uni.getStorageSync('userInfo').id
+						})
+						.then(res => {
+							// console.log(res)
+							if (res.code == 200) {
+								this.listdata = []
+								this.mytielist()
+							}
+						})
+				} else {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					});
+				}
 			}
 		},
 		//滚动到底部
-		onReachBottom(){
-			if(this.datas.length>0){
-				this.page  = this.page+1
+		onReachBottom() {
+			if (this.datas.length > 0) {
+				this.page = this.page + 1
 				this.mytielist()
 			}
-			
+
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	.addview{
+	.addview {
 		position: fixed;
 		bottom: 10%;
 		right: 3%;
@@ -108,24 +286,29 @@
 		align-items: center;
 		justify-content: center;
 	}
-	.newboss{
+
+	.newboss {
 		width: 100%;
 		margin-top: 40rpx;
-		.newview1{
+
+		.newview1 {
 			width: 100%;
 			// height: 600rpx;
 			padding: 20rpx 0;
+
 			// background-color: #18B566;
-			.topleftimg{
+			.topleftimg {
 				float: left;
 				margin-right: 20rpx;
 			}
-			.topleftname{
+
+			.topleftname {
 				float: left;
 				line-height: 30rpx;
 				color: #999;
 				font-size: 12px;
-				p:first-child{
+
+				p:first-child {
 					color: #000;
 					font-size: 14px;
 					font-weight: bold;
@@ -134,29 +317,32 @@
 					margin-bottom: 5px;
 				}
 			}
-			.content{
+
+			.content {
 				// background-color: #18B566;
 				width: 100%;
 				margin-top: 110rpx;
 				text-overflow: ellipsis;
 				text-overflow: -o-ellipsis-lastline;
-				  overflow: hidden;
-				  text-overflow: ellipsis;
-				  display: -webkit-box;
-				  -webkit-line-clamp: 3;
-				  line-clamp: 3;
-				  -webkit-box-orient: vertical;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				line-clamp: 3;
+				-webkit-box-orient: vertical;
 			}
-			.conimg{
+
+			.conimg {
 				margin-top: 30rpx;
 				margin-bottom: 10rpx;
 			}
-			.plview{
+
+			.plview {
 				height: 70rpx;
-				
+
 			}
-			
+
 		}
-		
+
 	}
 </style>

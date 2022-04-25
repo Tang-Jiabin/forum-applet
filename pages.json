@@ -76,6 +76,13 @@
 			"style": {
 				"navigationBarTitleText": "阅读历史"				
 			}
+		},
+		//我的评论
+		{
+			"path": "pages/my/mypl",
+			"style": {
+				"navigationBarTitleText": "我的评论"				
+			}
 		}
 	],
 	"globalStyle": {

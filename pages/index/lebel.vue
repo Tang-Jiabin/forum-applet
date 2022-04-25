@@ -1,11 +1,11 @@
 <template>
 	<view class="u-wrap">
 		<view class="newview1" v-for="(item,index) in tabbar" :key="index">
-			<view style="padding: 30rpx 30rpx;">
+			<view v-if="item.name != '推荐' && item.name != '最新'&& item.name != '排行'" style="padding: 30rpx 30rpx;">
 				<view class="" @click="labelclick(item.name,item.id)">
 					<view class="top">
 						<view class="item-title">
-							<p><text>{{item.name}}</text></p>
+							<p><text >{{item.name}}</text></p>
 						</view>			
 					</view>
 					
