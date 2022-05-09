@@ -6,6 +6,12 @@
 					<u-icon name="share" color="#fff" size="45"></u-icon>
 				</view>
 			</button>
+			<br />
+			<button @click="open()" class="bf_but">
+				<view style="height: 32px;line-height: 32px; font-size: 18px;">
+					举报
+				</view>
+			</button>
 		</view>
 		<view class="newview1">
 			<view style="padding: 0 30rpx;">
@@ -33,6 +39,7 @@
 					</u-row>
 				</view>
 
+
 				<view class="plview">
 					<u-section title="评论" :right="false" line-color="#2175F6" font-size="30"></u-section>
 					<!-- @confirm  -->
@@ -47,7 +54,7 @@
 									<view class="">
 										{{item.uname}}
 									</view>
-									
+
 								</view>
 								<view class="con3">
 									{{item.ctime}}|{{item.storey}}
@@ -55,7 +62,7 @@
 								<view class="con2">
 									{{item.content}}
 								</view>
-								
+
 							</view>
 						</view>
 						<view style="width: 100%;background-color: #f9f9f9;height: 25rpx;margin-top: 20rpx;"></view>
@@ -68,10 +75,18 @@
 
 			</view>
 		</view>
-		<view class="footer">
+		<view class="footer" v-show="!show">
 
-			<u-search margin="10rpx 50rpx" @search="add" @custom="add" :showAction="true" searchIcon="grid" actionText="发表"
-				placeholder="发表你的评论" v-model="content" :clearabled="true">
+			<u-search margin="10rpx 50rpx" @search="add" @custom="add" :showAction="true" searchIcon="grid"
+				actionText="发表" placeholder="发表你的评论" v-model="content" :clearabled="true">
+			</u-search>
+			<view style="width: 100%;background-color: #f9f9f9;height: 10rpx;">
+
+			</view>
+		</view>
+		<view class="footer" v-show="show">
+			<u-search margin="10rpx 50rpx" @search="report" @custom="report" :showAction="true" searchIcon="grid"
+				actionText="举报" placeholder="请输入举报内容" v-model="content" :clearabled="true">
 			</u-search>
 			<view style="width: 100%;background-color: #f9f9f9;height: 10rpx;">
 
@@ -84,7 +99,7 @@
 	export default {
 		data() {
 			return {
-				
+				show: false,
 				avatar: '',
 				id: '',
 				datas: {},
@@ -99,7 +114,14 @@
 
 		},
 		methods: {
-
+			open() {
+				this.show = true
+				console.log(this.show);
+			},
+			close() {
+				this.show = false
+				console.log(this.show);
+			},
 			xqlist() {
 				this.$u.post('/Forum/bydata', {
 						id: this.id,
@@ -129,9 +151,9 @@
 			pllist() {
 				this.$u.post('/Forum/pllist', {
 						fid: this.id,
-						page:1,
-						limit:50,
-						loginId:uni.getStorageSync('userInfo').id
+						page: 1,
+						limit: 50,
+						loginId: uni.getStorageSync('userInfo').id
 					})
 					.then(res => {
 						// console.log(res)
@@ -144,6 +166,13 @@
 			},
 			//添加评论
 			add(content) {
+				if (uni.getStorageSync("userInfo").state != 1) {
+					uni.showToast({
+						title: '已被禁言',
+						icon: 'none'
+					});
+					return;
+				}
 				this.$u.post('/Forum/plAdd', {
 						id: this.id,
 						uid: uni.getStorageSync('userInfo').id,
@@ -158,10 +187,39 @@
 							})
 							this.content = ''
 							this.pllist()
+						} else {
+							uni.showToast({
+								title: res.msg,
+								icon: 'none'
+							});
+						}
+					}).catch(error => {
+						console.log(error)
+						uni.showToast({
+							title: error.data.msg,
+							icon: 'none'
+						});
+					});
+			},
+			report(content) {
+				this.$u.post('/Forum/report', {
+						id: this.id,
+						uid: uni.getStorageSync('userInfo').id,
+						content: this.content
+					})
+					.then(res => {
+						// console.log(res)
+						if (res.code == 200) {
+							this.$refs.uToast.show({
+								title: res.msg,
+								type: 'success'
+							})
+							this.content = ''
+							this.show = false
 						}
 					})
 			},
-			
+
 		}
 	}
 </script>

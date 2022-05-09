@@ -81,6 +81,14 @@
 			},
 			//添加帖子
 			adddata() {
+				if(uni.getStorageSync("userInfo").state != 1){
+					uni.showToast({
+						title: '已被禁言',
+						icon: 'none'
+					});
+					return;
+				}
+				
 				if (this.fromlist.labelsid) {
 					//图片
 					for (var i = 0; i < this.lists.length; i++) {
@@ -116,8 +124,19 @@
 									title: res.msg,
 									icon: 'none'
 								});
+							}else{
+								uni.showToast({
+									title: res.msg,
+									icon: 'none'
+								});
 							}
-						})
+						}).catch(error => {
+							console.log(error)
+						uni.showToast({
+							title: error.data.msg,
+							icon: 'none'
+						});
+					});
 
 
 				} else {
